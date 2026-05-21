@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useMemo } from 'react';
-import { FlatList, StyleSheet, TextInput, View } from 'react-native';
+import { FlatList, StyleSheet, TextInput, View, Text } from 'react-native';
 import { RootStackParamList } from '../types/navigation';
 import usePokemonStore from '../store/pokemonStore';
 import { getIdFromUrl } from '../utils/pokemon';
@@ -14,10 +14,8 @@ const HomeScreen = ({ navigation }: Props) => {
     const fetchPokemonList = usePokemonStore(state => state.fetchPokemonList);
     const setSearchQuery = usePokemonStore(state => state.setSearchQuery);
     const searchQuery = usePokemonStore(state => state.searchQuery);
-
-    useEffect(() => {
-        fetchPokemonList();
-    }, []);
+    const isLoading = usePokemonStore(state => state.isLoading);
+    const error = usePokemonStore(state => state.error);
 
     const filteredPokemons = useMemo(() => {
         if (!searchQuery) return pokemons;
@@ -26,6 +24,10 @@ const HomeScreen = ({ navigation }: Props) => {
         );
     }, [pokemons, searchQuery]);
 
+    useEffect(() => {
+        fetchPokemonList();
+    }, []);
+
     const renderItem = ({ item, index }: { item: PokemonListItem; index: number }) => (
         <PokemonCard
             item={item}
@@ -33,6 +35,22 @@ const HomeScreen = ({ navigation }: Props) => {
             onPress={() => navigation.navigate('Details', { pokemonId: getIdFromUrl(item.url) })}
         />
     );
+
+    if(isLoading) {
+        return (
+            <View style={styles.container}>
+                <Text>Loading...</Text>
+            </View>
+        );
+    }
+
+    if(error) {
+        return (
+            <View style={styles.container}>
+                <Text>Error: {error}</Text>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
@@ -43,8 +61,8 @@ const HomeScreen = ({ navigation }: Props) => {
             />
             <FlatList
                 data={filteredPokemons}
-                keyExtractor={item => item.name}
                 renderItem={renderItem}
+                keyExtractor={item => item.name}
                 contentContainerStyle={styles.list}
             />
         </View>
@@ -54,11 +72,10 @@ const HomeScreen = ({ navigation }: Props) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 16,
         backgroundColor: '#fff',
     },
     searchInput: {
-        marginVertical: 10,
+        margin: 16,
         paddingHorizontal: 16,
         paddingVertical: 10,
         borderRadius: 10,
@@ -68,6 +85,7 @@ const styles = StyleSheet.create({
     },
     list: {
         gap: 10,
+        paddingHorizontal: 16,
         paddingBottom: 16,
     },
 });
