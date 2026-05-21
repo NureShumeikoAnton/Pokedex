@@ -67,12 +67,12 @@ const PokemonDetailsScreen = ({ navigation, route }: Props) => {
                 </Text>
             </View>
             <View>
-                <Text style={styles.descText}>HP: {selectedPokemon?.stats.find(s => s.stat.name === "hp")?.base_stat}</Text>
-                <Text style={styles.descText}>ATTACK: {selectedPokemon?.stats.find(s => s.stat.name === "attack")?.base_stat}</Text>
-                <Text style={styles.descText}>DEFENSE: {selectedPokemon?.stats.find(s => s.stat.name === "defense")?.base_stat}</Text>
-                <Text style={styles.descText}>SPEED: {selectedPokemon?.stats.find(s => s.stat.name === "speed")?.base_stat}</Text>
-                <Text style={styles.descText}>SPECIAL ATTACK: {selectedPokemon?.stats.find(s => s.stat.name === "special-attack")?.base_stat}</Text>
-                <Text style={styles.descText}>SPECIAL DEFENSE: {selectedPokemon?.stats.find(s => s.stat.name === "special-defense")?.base_stat}</Text>
+                <Text style={styles.nameText}>Stats:</Text>
+                {selectedPokemon?.stats.map(s => (
+                    <Text key={s.stat.name} style={styles.descText}>
+                        {s.stat.name.toUpperCase()}: {s.base_stat}
+                    </Text>
+                ))}
             </View>
         </View>
     )
