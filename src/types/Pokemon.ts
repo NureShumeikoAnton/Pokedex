@@ -24,3 +24,5 @@ interface Pokemon {
         };
     }[];
 }
+
+export type { Pokemon, PokemonListItem };
